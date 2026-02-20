@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard Suspek Dengue</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- LIBRARY -->
+<script src="https://cdn.jsdelivr.net/npm/papaparse"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="dashboard">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar">
+    <h2>🦟 Dengue</h2>
+    <button class="active" onclick="showPage('nasional', this)">
+  🇮🇩 <span>Indonesia</span>
+</button>
+
+<button onclick="showPage('jateng', this)">
+  📍 <span>Jawa Tengah</span>
+</button>
+
+<button onclick="showPage('semarang', this)">
+   🏙️ <span>Kota Semarang</span>
+</button>
+
+  </aside>
+  
+  <!-- ===== MAIN ===== -->
+  <main class="main">
+
+    <header class="header header-with-logo">
+  <img src="logo_kemenkes.png" class="logo-kemenkes">
+  <h1>Dashboard Surveilans Suspek Dengue</h1>
+</header>
+
+    <!-- ===== KPI ===== -->
+    <div class="kpi-row">
+      <div class="kpi">
+        Total Kasus
+        <span id="kpiTotal">0</span>
+      </div>
+      <div class="kpi">
+        Wilayah Tertinggi
+        <span id="kpiProv">-</span>
+      </div>
+      <div class="kpi">
+        Rata Mingguan
+        <span id="kpiAvg">0</span>
+      </div>
+    </div>
+
+    <!-- ================= NASIONAL ================= -->
+    <section id="nasional" class="page">
+      <div class="grid">
+
+        <!-- TREN -->
+        <div class="card">
+          <div class="card-header">
+            Tren Nasional
+            <select id="provinsiSelect"></select>
+          </div>
+          <canvas id="lineNas"></canvas>
+        </div>
+
+        <!-- DISTRIBUSI -->
+        <div class="card">
+          <div class="card-header">
+            Distribusi
+            <select id="tahunDistribusi">
+              <option value="ALL">Semua</option>
+              <option>2023</option>
+              <option>2024</option>
+              <option>2025</option>
+            </select>
+          </div>
+          <canvas id="barDistribusi"></canvas>
+        </div>
+
+        <!-- MAP WIDE -->
+        <div class="card wide">
+          <div class="card-header">
+            Peta Nasional
+            <select id="tahunMap">
+              <option value="ALL">Semua</option>
+              <option>2023</option>
+              <option>2024</option>
+              <option>2025</option>
+            </select>
+          </div>
+          <div id="map"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= JATENG ================= -->
+    <section id="jateng" class="page">
+      <div class="grid">
+
+        <!-- BAR KAB/KOTA -->
+        <div class="card wide">
+          <div class="card-header">
+            Distribusi Kasus per Kab/Kota (Jawa Tengah)
+            <select id="tahunJateng"></select>
+          </div>
+          <canvas id="barJateng"></canvas>
+        </div>
+        
+        <!-- MAP JATENG -->
+        <div class="card wide">
+  <div class="card-header">
+    Map Persebaran Kasus Jawa Tengah
+  </div>
+  <div id="mapJateng"></div>
+</div>
+      </div>
+
+    </section>
+    
+     <!-- ================= SEMARANG ================= -->
+     <section id="semarang" class="page">
+      <div class="grid">
+
+        <!-- BAR KECAMATAN -->
+        <div class="card wide">
+          <div class="card-header">
+            Distribusi Kasus per Kecamatan (Daerah Semarang)
+            <select id="tahunSemarang"></select>
+          </div>
+          <canvas id="barSemarang"></canvas>
+        </div>
+<!-- MAP SEMARANG -->
+<div class="card wide">
+  <div class="card-header header-flex">
+    <span>Map Persebaran Kasus Dengue Daerah Semarang</span>
+    <!-- ❗ TIDAK PERLU dropdown kedua -->
+  </div>
+
+  <div id="mapSemarang"></div>
+
+  <div class="legend-box">
+    <b>Keterangan:</b><br>
+
+    <div class="legend-item">
+      <span class="legend-color merah"></span>
+      Area merah = kasus tinggi
+    </div>
+
+    <div class="legend-item">
+      <span class="legend-color kuning"></span>
+      Area kuning = kasus sedang
+    </div>
+
+    <div class="legend-item">
+      <span class="legend-color hijau"></span>
+      Area hijau = kasus rendah
+    </div>
+
+    <div id="legendFaskes"></div>
+    <hr>
+  </div>
+  
+</div>
+      <!-- LINE ANALISIS -->
+<div class="card wide">
+  <div class="card-header">
+    Tren Kasus vs Variabel (Semarang)
+  </div>
+  <canvas id="lineSemarang"></canvas>
+</div>
+
+<!-- SCATTER -->
+<div class="card">
+  <div class="card-header">
+    Scatter Variabel vs Kasus
+    <select id="variabelSelectSemarang">
+      <option value="hujan">Curah Hujan</option>
+      <option value="suhu">Suhu</option>
+      <option value="lembap">Kelembapan</option>
+    </select>
+  </div>
+  <canvas id="scatterSemarang"></canvas>
+</div>
+        <!-- KORELASI -->
+        <div class="card">
+          <div class="card-header">Korelasi</div>
+          <h2 id="korelasiSemarang">-</h2>
+         <p id="korelasiTextSemarang"></p>
+        </div>
+      </div>
+      </section>
+  </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
